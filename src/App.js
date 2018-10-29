@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import ReactDOM from "react-dom";
+import importer from "./importer";
 import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
 
 // fake data generator
@@ -57,6 +58,14 @@ const getListStyle = isDraggingOver => ({
 });
 
 class App extends Component {
+  componentDidMount() {
+    const discogs = importer("blacklight", 50, 1);
+    discogs.send();
+    discogs.onreadystatechange = e => {
+      console.log(discogs.responseText);
+    };
+  }
+
   state = {
     items: getItems(10),
     selected: getItems(5, 10)
