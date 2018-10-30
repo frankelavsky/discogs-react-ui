@@ -39,7 +39,6 @@ class App extends Component {
 
   updateWindowDimensions() {
     this.setState({ width: window.innerWidth, height: window.innerHeight });
-    console.log(this.state);
   }
   componentDidMount() {
     this.updateWindowDimensions();
@@ -118,6 +117,22 @@ class App extends Component {
     this.setState(output);
   };
 
+  deleteShelf = (event, shelfId) => {
+    let index = +shelfId.substring(5),
+      i = 1,
+      newArray = [];
+    for (i = 1; i <= this.state.pages.length; i++) {
+      let slice;
+      if (index === i) {
+        slice = null;
+      } else {
+        slice = this.state.pages[i - 1];
+      }
+      newArray.push(slice);
+    }
+    this.setState({ pages: newArray, shelfId: undefined });
+  };
+
   render() {
     return (
       <div>
@@ -126,17 +141,20 @@ class App extends Component {
           onDragUpdate={this.onDragUpdate}
         >
           {this.state.pages.map(page => {
-            return (
-              <Shelf
-                key={page.pagination.page}
-                id={"shelf_" + page.pagination.page}
-                page_number={page.pagination.page}
-                releases={this.state["shelf" + page.pagination.page]}
-                height={this.state.height}
-                title={this.state["shelfTitle" + page.pagination.page]}
-                handler={this.handleChange}
-              />
-            );
+            if (page) {
+              return (
+                <Shelf
+                  key={page.pagination.page}
+                  id={"shelf_" + page.pagination.page}
+                  page_number={page.pagination.page}
+                  releases={this.state["shelf" + page.pagination.page]}
+                  height={this.state.height}
+                  title={this.state["shelfTitle" + page.pagination.page]}
+                  handler={this.handleChange}
+                  deleteFunction={this.deleteShelf}
+                />
+              );
+            }
           })}
         </DragDropContext>
       </div>
