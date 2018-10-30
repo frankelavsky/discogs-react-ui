@@ -21,7 +21,6 @@ code {
 #root {
   display: flex;
   justify-content: space-between;
-  overflow-x: auto;
   white-space: nowrap;
   position: relative;
 }
@@ -77,6 +76,7 @@ h3 {
 .shelf::-webkit-scrollbar,
 .list::-webkit-scrollbar {
   width: 10px;
+  height: 10px;
 }
 
 /* Track */
@@ -114,11 +114,11 @@ h3 {
   border-width: 1px;
   border-color: #f1f1f1;
   font-family: "Oswald", sans-serif;
-  width: 27px;
+  width: 28px;
   height: 28px;
   padding: 0px;
   z-index: 9999;
-  left: -27px;
+  left: -28px;
   top: 0px;
 }
 
@@ -148,12 +148,12 @@ h3 {
 
 .shelfTitle {
   position: absolute;
-  width: 218px;
+  width: 219px;
   -webkit-transform: rotate(270deg);
   -moz-transform: rotate(270deg);
   -o-transform: rotate(270deg);
   -ms-transform: rotate(270deg);
-  transform-origin: 44px 200px 0;
+  transform-origin: 44px 201px 0;
   transform: rotate(270deg);
   font-size: 1.2em;
   font-family: "Dosis", sans-serif;
