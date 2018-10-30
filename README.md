@@ -7,4 +7,4 @@ Created with Create-React-App.
 
 ## Loading this environment
 
-Download or clone this repo and run npm install
+Download or clone this repo and run npm install and then npm start
