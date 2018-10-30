@@ -1,6 +1,5 @@
 const importer = (username, perpage, page) => {
-  const Http = new XMLHttpRequest();
-  const url =
+  let url =
     "https://api.discogs.com/users/" +
     username +
     "/collection/folders/0/releases" +
@@ -8,7 +7,10 @@ const importer = (username, perpage, page) => {
     perpage +
     "&page=" +
     page;
-  Http.open("GET", url);
-  return Http;
+  return fetch(url)
+    .then(response => {
+      return response.json();
+    })
+    .catch(error => console.log(error));
 };
 export default importer;
