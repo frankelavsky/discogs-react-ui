@@ -1,5 +1,6 @@
 import React from "react";
 import Record from "./record";
+import DeleteButton from "./deleteButton";
 import { Droppable } from "react-beautiful-dnd";
 
 const grid = 4;
@@ -22,6 +23,10 @@ const Shelf = props => {
             ref={provided.innerRef}
             style={getListStyle(snapshot.isDraggingOver, props.releases.length)}
           >
+            <DeleteButton
+              deleteFunction={props.deleteFunction}
+              deleteId={"shelf" + props.page_number}
+            />
             <input
               type="text"
               value={props.title}
