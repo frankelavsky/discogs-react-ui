@@ -26,7 +26,7 @@ const move = (source, destination, droppableSource, droppableDestination) => {
   return result;
 };
 
-const pages_override = 4;
+const pages_override = 5;
 class App extends Component {
   constructor(props) {
     super(props);
@@ -44,7 +44,7 @@ class App extends Component {
   componentDidMount() {
     this.updateWindowDimensions();
     window.addEventListener("resize", this.updateWindowDimensions);
-    let per_page = 15;
+    let per_page = 25;
     importer("blacklight", per_page, 1).then(discog => {
       let i = 2,
         pages = pages_override;
@@ -119,7 +119,6 @@ class App extends Component {
   };
 
   deleteShelf = (event, shelfId) => {
-    console.log("deleting");
     let index = +shelfId.substring(5),
       i = 1,
       newArray = [];
@@ -132,7 +131,10 @@ class App extends Component {
       }
       newArray.push(slice);
     }
-    this.setState({ pages: newArray, shelfId: undefined });
+    let newState = {};
+    newState[shelfId] = undefined;
+    newState.pages = newArray;
+    this.setState(newState);
   };
 
   addShelf = () => {
@@ -144,14 +146,12 @@ class App extends Component {
     newState["shelf" + (this.state.pages.length + 1)] = [];
     let i = 0,
       newArray = [];
-    newArray.push(emptySlice);
-    for (i = 0; i <= this.state.pages.length; i++) {
+    for (i = 0; i < this.state.pages.length; i++) {
       let slice = this.state.pages[i];
       newArray.push(slice);
     }
+    newArray.push(emptySlice);
     newState.pages = newArray;
-    console.log(newState);
-    console.log(this.state);
     this.setState(newState);
   };
 
@@ -168,7 +168,7 @@ class App extends Component {
               return (
                 <Shelf
                   key={page.pagination.page}
-                  id={"shelf_" + page.pagination.page}
+                  id={"shelf" + page.pagination.page}
                   page_number={page.pagination.page}
                   releases={this.state["shelf" + page.pagination.page]}
                   height={this.state.height}
@@ -177,7 +177,7 @@ class App extends Component {
                   deleteFunction={this.deleteShelf}
                 />
               );
-            }
+            } else return null;
           })}
         </DragDropContext>
       </div>
