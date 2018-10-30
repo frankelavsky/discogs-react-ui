@@ -1,16 +1,8 @@
 import React, { Component } from "react";
-import ReactDOM from "react-dom";
 import importer from "./importer";
-import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
+import Shelf from "./shelf";
+import { DragDropContext } from "react-beautiful-dnd";
 
-// fake data generator
-const getItems = (count, offset = 0) =>
-  Array.from({ length: count }, (v, k) => k).map(k => ({
-    id: `item-${k + offset}`,
-    content: `item ${k + offset}`
-  }));
-
-// a little function to help us with reordering the result
 const reorder = (list, startIndex, endIndex) => {
   const result = Array.from(list);
   const [removed] = result.splice(startIndex, 1);
@@ -19,9 +11,6 @@ const reorder = (list, startIndex, endIndex) => {
   return result;
 };
 
-/**
- * Moves an item from one list to another list.
- */
 const move = (source, destination, droppableSource, droppableDestination) => {
   const sourceClone = Array.from(source);
   const destClone = Array.from(destination);
@@ -36,40 +25,49 @@ const move = (source, destination, droppableSource, droppableDestination) => {
   return result;
 };
 
-const grid = 8;
-
-const getItemStyle = (isDragging, draggableStyle) => ({
-  // some basic styles to make the items look a bit nicer
-  userSelect: "none",
-  padding: grid * 2,
-  margin: `0 0 ${grid}px 0`,
-
-  // change background colour if dragging
-  background: isDragging ? "lightgreen" : "grey",
-
-  // styles we need to apply on draggables
-  ...draggableStyle
-});
-
-const getListStyle = isDraggingOver => ({
-  background: isDraggingOver ? "lightblue" : "lightgrey",
-  padding: grid,
-  width: 250
-});
-
+const pages_override = 3;
 class App extends Component {
-  componentDidMount() {
-    const discogs = importer("blacklight", 50, 1);
-    discogs.send();
-    discogs.onreadystatechange = e => {
-      console.log(discogs.responseText);
-    };
+  constructor(props) {
+    super(props);
+    this.state = { width: 0, height: 0, pages: [] };
+    this.updateWindowDimensions = this.updateWindowDimensions.bind(this);
   }
 
-  state = {
-    items: getItems(10),
-    selected: getItems(5, 10)
-  };
+  componentWillUnmount() {
+    window.removeEventListener("resize", this.updateWindowDimensions);
+  }
+
+  updateWindowDimensions() {
+    this.setState({ width: window.innerWidth, height: window.innerHeight });
+    console.log(this.state);
+  }
+  componentDidMount() {
+    this.updateWindowDimensions();
+    window.addEventListener("resize", this.updateWindowDimensions);
+    let per_page = 15;
+    importer("blacklight", per_page, 1).then(discog => {
+      let i = 2,
+        pages = pages_override;
+      if (!pages_override) {
+        pages = discog.pagination.pages;
+      }
+      let promises = Array(pages);
+      promises[0] = discog;
+      for (i = 2; i <= pages; i++) {
+        promises[i - 1] = importer("blacklight", per_page, i);
+      }
+      Promise.all(promises).then(pages => {
+        const output = {};
+        output.pages = pages;
+        let x = 1;
+        output.pages.forEach(d => {
+          output["shelf" + x] = d.releases;
+          x++;
+        });
+        this.setState(output);
+      });
+    });
+  }
 
   /**
    * A semi-generic way to handle multiple lists. Matches
@@ -77,11 +75,15 @@ class App extends Component {
    * source arrays stored in the state.
    */
   id2List = {
-    droppable: "items",
+    droppable1: "items",
     droppable2: "selected"
   };
 
-  getList = id => this.state[this.id2List[id]];
+  getList = id => this.state[id];
+
+  onDragUpdate = result => {
+    console.log();
+  };
 
   onDragEnd = result => {
     const { source, destination } = result;
@@ -90,94 +92,54 @@ class App extends Component {
     if (!destination) {
       return;
     }
+    let srcId = source.droppableId;
+    let destId = destination.droppableId;
+    if (srcId === destId) {
+      const items = reorder(this.state[srcId], source.index, destination.index);
 
-    if (source.droppableId === destination.droppableId) {
-      const items = reorder(
-        this.getList(source.droppableId),
-        source.index,
-        destination.index
-      );
-
-      let state = { items };
-
-      if (source.droppableId === "droppable2") {
-        state = { selected: items };
-      }
-
-      this.setState(state);
+      const output = {};
+      output[srcId] = items;
+      this.setState(output);
     } else {
       const result = move(
-        this.getList(source.droppableId),
-        this.getList(destination.droppableId),
+        this.getList(srcId),
+        this.getList(destId),
         source,
         destination
       );
 
-      this.setState({
-        items: result.droppable,
-        selected: result.droppable2
-      });
+      this.setState(result);
     }
+  };
+
+  handleChange = (event, title) => {
+    var output = {};
+    output[title] = event.target.value;
+    this.setState(output);
   };
 
   render() {
     return (
-      <DragDropContext onDragEnd={this.onDragEnd}>
-        <Droppable droppableId="droppable">
-          {(provided, snapshot) => (
-            <div
-              ref={provided.innerRef}
-              style={getListStyle(snapshot.isDraggingOver)}
-            >
-              {this.state.items.map((item, index) => (
-                <Draggable key={item.id} draggableId={item.id} index={index}>
-                  {(provided, snapshot) => (
-                    <div
-                      ref={provided.innerRef}
-                      {...provided.draggableProps}
-                      {...provided.dragHandleProps}
-                      style={getItemStyle(
-                        snapshot.isDragging,
-                        provided.draggableProps.style
-                      )}
-                    >
-                      {item.content}
-                    </div>
-                  )}
-                </Draggable>
-              ))}
-              {provided.placeholder}
-            </div>
-          )}
-        </Droppable>
-        <Droppable droppableId="droppable2">
-          {(provided, snapshot) => (
-            <div
-              ref={provided.innerRef}
-              style={getListStyle(snapshot.isDraggingOver)}
-            >
-              {this.state.selected.map((item, index) => (
-                <Draggable key={item.id} draggableId={item.id} index={index}>
-                  {(provided, snapshot) => (
-                    <div
-                      ref={provided.innerRef}
-                      {...provided.draggableProps}
-                      {...provided.dragHandleProps}
-                      style={getItemStyle(
-                        snapshot.isDragging,
-                        provided.draggableProps.style
-                      )}
-                    >
-                      {item.content}
-                    </div>
-                  )}
-                </Draggable>
-              ))}
-              {provided.placeholder}
-            </div>
-          )}
-        </Droppable>
-      </DragDropContext>
+      <div>
+        <DragDropContext
+          onDragEnd={this.onDragEnd}
+          onDragUpdate={this.onDragUpdate}
+        >
+          {this.state.pages.map(page => {
+            return (
+              <Shelf
+                key={page.pagination.page}
+                id={"shelf_" + page.pagination.page}
+                page_number={page.pagination.page}
+                releases={this.state["shelf" + page.pagination.page]}
+                height={this.state.height}
+                title={this.state["shelfTitle" + page.pagination.page]}
+                handler={this.handleChange}
+              />
+            );
+          })}
+        </DragDropContext>
+      </div>
     );
   }
 }
