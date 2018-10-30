@@ -1,11 +1,15 @@
 body {
   margin: 0;
   padding: 0;
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen",
-    "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue",
+  font-family: "Dosis", -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto",
+    "Oxygen", "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue",
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  background: #14131a;
+}
+b {
+  font-family: "Oswald", sans-serif;
 }
 
 code {
@@ -16,4 +20,121 @@ code {
 #root {
   display: flex;
   justify-content: space-between;
+  overflow-x: auto;
+  white-space: nowrap;
+}
+
+p {
+  margin: 0px;
+}
+h1,
+h2,
+h3 {
+  font-family: "Oswald", sans-serif;
+  margin: 0px;
+}
+.year {
+  position: absolute;
+  display: block;
+  background: rgb(95, 17, 7);
+  color: white;
+  padding: 0 4px;
+  right: 0;
+  bottom: 0;
+}
+.record {
+  position: relative;
+  background: rgb(26, 22, 22);
+  color: rgb(255, 255, 247);
+}
+
+.record:hover {
+  background: #353535;
+}
+
+.shelf {
+  display: inline-block;
+  text-align: center;
+  overflow: auto;
+}
+
+.list {
+  white-space: normal;
+  max-width: 234px;
+  padding: 4px;
+}
+
+/* width */
+::-webkit-scrollbar,
+.shelf::-webkit-scrollbar,
+.list::-webkit-scrollbar {
+  width: 10px;
+}
+
+/* Track */
+::-webkit-scrollbar-track,
+.shelf::-webkit-scrollbar-track,
+.list::-webkit-scrollbar-track {
+  background: #14131a;
+}
+
+/* Track on hover*/
+::-webkit-scrollbar-track:hover,
+.shelf::-webkit-scrollbar-track:hover,
+.list::-webkit-scrollbar-track:hover {
+  background: #2f2d3b;
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb,
+.shelf::-webkit-scrollbar-thumb,
+.list::-webkit-scrollbar-thumb {
+  background: #888;
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover,
+.shelf::-webkit-scrollbar-thumb:hover,
+.list::-webkit-scrollbar-thumb:hover {
+  background: rgb(94, 94, 94);
+}
+
+.shelfTitle {
+  position: absolute;
+  width: 246px;
+  -webkit-transform: rotate(270deg);
+  -moz-transform: rotate(270deg);
+  -o-transform: rotate(270deg);
+  -ms-transform: rotate(270deg);
+  transform-origin: 44px 200px 0;
+  transform: rotate(270deg);
+  font-size: 1.2em;
+  font-family: "Dosis", sans-serif;
+  color: white;
+  background: #1d1b25;
+  border-width: 1px;
+  border-color: #f1f1f1;
+  z-index: 9999;
+}
+
+.shelfTitle:hover {
+  cursor: vertical-text;
+}
+
+.recordTitle {
+  font-size: 1.8em;
+  display: block;
+  max-height: 112px;
+  line-height: 1.3em;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: normal;
+}
+
+.row {
+  display: flex;
+}
+
+.detail {
+  flex: 50%;
 }
