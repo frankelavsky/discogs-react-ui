@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import importer from "./importer";
 import Shelf from "./shelf";
 import { DragDropContext } from "react-beautiful-dnd";
+import AddButton from "./addButton";
 
 const reorder = (list, startIndex, endIndex) => {
   const result = Array.from(list);
@@ -25,7 +26,7 @@ const move = (source, destination, droppableSource, droppableDestination) => {
   return result;
 };
 
-const pages_override = 3;
+const pages_override = 4;
 class App extends Component {
   constructor(props) {
     super(props);
@@ -118,6 +119,7 @@ class App extends Component {
   };
 
   deleteShelf = (event, shelfId) => {
+    console.log("deleting");
     let index = +shelfId.substring(5),
       i = 1,
       newArray = [];
@@ -133,9 +135,30 @@ class App extends Component {
     this.setState({ pages: newArray, shelfId: undefined });
   };
 
+  addShelf = () => {
+    let emptySlice = {};
+    emptySlice.pagination = {};
+    emptySlice.releases = [];
+    emptySlice.pagination.page = this.state.pages.length + 1;
+    let newState = {};
+    newState["shelf" + (this.state.pages.length + 1)] = [];
+    let i = 0,
+      newArray = [];
+    newArray.push(emptySlice);
+    for (i = 0; i <= this.state.pages.length; i++) {
+      let slice = this.state.pages[i];
+      newArray.push(slice);
+    }
+    newState.pages = newArray;
+    console.log(newState);
+    console.log(this.state);
+    this.setState(newState);
+  };
+
   render() {
     return (
       <div>
+        <AddButton addFunction={this.addShelf} top={this.state.height / 2} />
         <DragDropContext
           onDragEnd={this.onDragEnd}
           onDragUpdate={this.onDragUpdate}
