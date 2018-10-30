@@ -58,6 +58,12 @@ h3 {
   overflow: auto;
 }
 
+@-moz-document url-prefix() {
+  .shelf {
+    padding-right: 17px;
+  }
+}
+
 .list {
   white-space: normal;
   max-width: 234px;
@@ -99,9 +105,38 @@ h3 {
   background: rgb(94, 94, 94);
 }
 
+.deleteButton {
+  position: absolute;
+  background: rgba(255, 255, 255, 0.8);
+  color: rgb(95, 17, 7);
+  border-width: 1px;
+  border-color: #f1f1f1;
+  font-family: "Oswald", sans-serif;
+  width: 27px;
+  height: 28px;
+  padding: 0px;
+  z-index: 9999;
+  left: -27px;
+  top: 0px;
+}
+
+.buttonX {
+  position: relative;
+  font-size: 2.5em;
+  top: -0.51em;
+}
+
+.deleteButton:hover {
+  background: rgba(255, 255, 255, 0.7);
+}
+
+.deleteButton:active {
+  background: rgba(255, 255, 255, 0.5);
+}
+
 .shelfTitle {
   position: absolute;
-  width: 246px;
+  width: 218px;
   -webkit-transform: rotate(270deg);
   -moz-transform: rotate(270deg);
   -o-transform: rotate(270deg);
