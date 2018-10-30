@@ -7,6 +7,7 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   background: #14131a;
+  overflow-y: hidden;
 }
 b {
   font-family: "Oswald", sans-serif;
@@ -22,6 +23,7 @@ code {
   justify-content: space-between;
   overflow-x: auto;
   white-space: nowrap;
+  position: relative;
 }
 
 p {
@@ -125,13 +127,23 @@ h3 {
   font-size: 2.5em;
   top: -0.51em;
 }
-
 .deleteButton:hover {
   background: rgba(255, 255, 255, 0.7);
 }
 
 .deleteButton:active {
   background: rgba(255, 255, 255, 0.5);
+}
+
+.addButton {
+  position: absolute;
+  display: inline-block;
+  background: #5fba7d;
+}
+
+.buttonPlus {
+  position: relative;
+  font-size: 2.5em;
 }
 
 .shelfTitle {
